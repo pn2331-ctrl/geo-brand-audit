@@ -1,5 +1,7 @@
 # AI Brand Footprint Audit
 
+**[Live Demo](https://geo-brand-audit-jtk3832hghkmcdgzoh8vau.streamlit.app/)**
+
 A brand AI visibility diagnostic tool built on the GEO (Generative Engine Optimization) framework. Enter a brand name, automatically query Claude and Grok, analyze how the brand is recommended, described, and positioned across AI models — then download a full PDF diagnostic report.
 
 ---
