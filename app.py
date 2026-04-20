@@ -11,10 +11,108 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("AI Brand Footprint Audit")
-st.caption("See how Claude and Grok describe, recommend, and position your brand — based on the GEO diagnostic framework.")
+CUSTOM_CSS = """<style>
+[data-testid="stAppViewContainer"] { background: #F8F6FD; }
+[data-testid="stSidebar"] { background: #FFFFFF; border-right: 1px solid #E0D7F5; }
+#MainMenu, footer { visibility: hidden; }
 
-# --- Sidebar: API Keys ---
+.geo-hero {
+    background: linear-gradient(135deg, #3E266E 0%, #6946A5 60%, #9E7DD2 100%);
+    border-radius: 16px;
+    padding: 2.5rem 2.5rem 2.2rem;
+    margin-bottom: 1.8rem;
+}
+.geo-hero h1 {
+    font-size: 2rem; font-weight: 800; margin: 0 0 0.5rem; color: white;
+}
+.geo-hero p {
+    font-size: 1rem; margin: 0; color: #E0D7F5; line-height: 1.5;
+}
+.geo-hero .tag {
+    display: inline-block; background: rgba(255,255,255,0.18);
+    color: #F5F0FF; font-size: 0.72rem; font-weight: 600;
+    padding: 0.2rem 0.7rem; border-radius: 99px; margin-top: 1rem;
+    letter-spacing: 0.8px; text-transform: uppercase;
+}
+
+.section-header {
+    font-size: 1rem; font-weight: 700; color: #3E266E;
+    margin: 1.6rem 0 0.6rem;
+    padding-left: 0.75rem;
+    border-left: 4px solid #6946A5;
+}
+
+.score-card {
+    background: white;
+    border-radius: 14px;
+    padding: 1.6rem 1.4rem;
+    box-shadow: 0 4px 24px rgba(62,38,110,0.09);
+    border: 1px solid #E8E2F5;
+    text-align: center;
+}
+.model-label {
+    font-size: 0.85rem; font-weight: 800; color: #3E266E;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    margin-bottom: 1.1rem;
+}
+.geo-score-ring {
+    width: 108px; height: 108px; border-radius: 50%;
+    background: linear-gradient(145deg, #3E266E, #9E7DD2);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin: 0 auto 1.3rem;
+    box-shadow: 0 6px 20px rgba(62,38,110,0.28);
+}
+.geo-score-number { font-size: 2.3rem; font-weight: 900; color: white; line-height: 1; }
+.geo-score-label  { font-size: 0.56rem; color: #D8CAFF; letter-spacing: 1.8px; text-transform: uppercase; margin-top: 3px; }
+
+.sub-scores { margin: 0.2rem 0 1.1rem; }
+.sub-score-row { display: flex; align-items: center; margin: 0.42rem 0; gap: 0.55rem; text-align: left; }
+.sub-score-name { font-size: 0.75rem; color: #8A8AA8; width: 88px; flex-shrink: 0; text-align: right; }
+.sub-score-bar-bg { flex: 1; background: #EFE9FB; border-radius: 99px; height: 6px; overflow: hidden; }
+.sub-score-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #9E7DD2, #3E266E); }
+.sub-score-val { font-size: 0.76rem; font-weight: 700; color: #3E266E; width: 30px; flex-shrink: 0; }
+
+.diag-badge {
+    display: inline-block; padding: 0.3rem 1rem;
+    border-radius: 99px; font-size: 0.8rem; font-weight: 700;
+    margin: 0.2rem 0 0.5rem;
+}
+.diag-geo-ready     { background: #EAE5F7; color: #3E266E; }
+.diag-accurate      { background: #EDE9FA; color: #6946A5; }
+.diag-visible-wrong { background: #FDF0F0; color: #A04040; }
+.diag-invisible     { background: #F0F0F4; color: #7A7A90; }
+
+.advice-text { font-size: 0.8rem; color: #8A8AA8; line-height: 1.55; margin: 0; }
+
+.divider-line {
+    border: none; border-top: 1px solid #E8E2F5; margin: 1.6rem 0;
+}
+
+[data-testid="stDownloadButton"] button {
+    background: linear-gradient(135deg, #3E266E, #6946A5) !important;
+    color: white !important; border: none !important;
+    border-radius: 8px !important; font-weight: 700 !important;
+    padding: 0.55rem 2rem !important;
+}
+[data-testid="stButton"] button[kind="primary"] {
+    background: linear-gradient(135deg, #3E266E, #6946A5);
+    border: none; border-radius: 8px; font-weight: 700;
+}
+</style>"""
+
+st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+
+# ── Hero ──────────────────────────────────────────────────────────
+st.markdown("""
+<div class="geo-hero">
+    <h1>AI Brand Footprint Audit</h1>
+    <p>See how Claude and Grok discover, describe, and recommend your brand<br>— scored with the GEO diagnostic framework.</p>
+    <span class="tag">NYU Stern · GEO Research · Spring 2026</span>
+</div>
+""", unsafe_allow_html=True)
+
+# ── Sidebar ───────────────────────────────────────────────────────
 try:
     _ant_secret = st.secrets.get("ANTHROPIC_API_KEY", "")
     _xai_secret = st.secrets.get("XAI_API_KEY", "")
@@ -23,35 +121,39 @@ except Exception:
     _xai_secret = ""
 
 with st.sidebar:
-    st.header("API Keys")
+    st.markdown("### API Keys")
     if _ant_secret and _xai_secret:
         st.success("Keys loaded from secrets.")
         anthropic_key = _ant_secret
         xai_key       = _xai_secret
     else:
         anthropic_key = st.text_input("Anthropic API Key", type="password", placeholder="sk-ant-...")
-        xai_key       = st.text_input("xAI API Key", type="password", placeholder="xai-...")
+        xai_key       = st.text_input("xAI API Key",       type="password", placeholder="xai-...")
         st.caption("Keys are used only for this session and never stored.")
+    st.divider()
+    st.caption("Built on GEO research from NYU Stern Digital Strategy, Spring 2026.")
 
-# --- Main: Inputs ---
-st.subheader("Brand Info")
-col1, col2 = st.columns(2)
-with col1:
-    brand    = st.text_input("Brand Name",    placeholder="e.g. CeraVe")
-    category = st.text_input("Market Context", placeholder="e.g. sensitive skin, electric vehicles, plant-based dairy")
-with col2:
-    product    = st.text_input("Product Type",         placeholder="e.g. moisturizer")
-    competitor = st.text_input("Competitor (optional)", placeholder="e.g. La Roche-Posay")
+# ── Inputs ────────────────────────────────────────────────────────
+st.markdown('<div class="section-header">Brand Info</div>', unsafe_allow_html=True)
+
+with st.container(border=True):
+    col1, col2 = st.columns(2)
+    with col1:
+        brand    = st.text_input("Brand Name",     placeholder="e.g. CeraVe")
+        category = st.text_input("Market Context", placeholder="e.g. sensitive skin, electric vehicles")
+    with col2:
+        product    = st.text_input("Product Type",          placeholder="e.g. moisturizer")
+        competitor = st.text_input("Competitor (optional)",  placeholder="e.g. La Roche-Posay")
 
 keys_ready   = bool(anthropic_key and xai_key)
 inputs_ready = bool(brand and category and product)
-run_button   = st.button("Run Audit", type="primary", disabled=not (keys_ready and inputs_ready))
+run_button   = st.button("Run Audit", type="primary", disabled=not (keys_ready and inputs_ready), use_container_width=True)
 
 if not keys_ready:
     st.info("Enter your API keys in the sidebar to get started.")
 
 
-# --- Core Functions ---
+# ── Backend ───────────────────────────────────────────────────────
 
 def ask_claude(client, prompt):
     response = client.messages.create(
@@ -106,8 +208,6 @@ def run_audit(ant_client, grok_client, brand, category, product, competitor=None
         })
     return results
 
-
-# --- Scoring Judges ---
 
 def score_accuracy(ant_client, brand, evaluation_text):
     judge_prompt = (
@@ -202,49 +302,100 @@ def score_model(ant_client, brand, results, model_key):
 DIAGNOSIS_INFO = {
     "GEO Ready": {
         "emoji": "✅",
+        "css":   "diag-geo-ready",
         "advice": "AI models know your brand, recommend it unprompted, and describe it accurately. Monitor regularly to maintain this position."
     },
     "Visible but Wrong": {
         "emoji": "⚠️",
+        "css":   "diag-visible-wrong",
         "advice": "AI recommends your brand but describes it inaccurately. Most dangerous outcome — audit and correct the information sources AI is learning from."
     },
     "Accurate but Missing": {
         "emoji": "📉",
+        "css":   "diag-accurate",
         "advice": "AI describes your brand accurately but doesn't recommend it unprompted. Increase third-party content coverage to boost visibility."
     },
     "Invisible & Misrepresented": {
         "emoji": "❌",
+        "css":   "diag-invisible",
         "advice": "AI doesn't know or recommend your brand. Build foundational content presence from scratch."
     },
 }
 
 
-# --- PDF Export ---
+def render_score_card(model_name, scores):
+    geo      = scores["geo_score"]
+    citation = scores["citation"]
+    accuracy = scores["accuracy"]
+    h2h      = scores["head_to_head"]
+    diag     = scores["diagnosis"]
+    info     = DIAGNOSIS_INFO[diag]
+
+    h2h_html = ""
+    if h2h is not None:
+        h2h_html = f"""
+        <div class="sub-score-row">
+            <span class="sub-score-name">Head-to-Head</span>
+            <div class="sub-score-bar-bg">
+                <div class="sub-score-bar-fill" style="width:{h2h * 10}%"></div>
+            </div>
+            <span class="sub-score-val">{h2h}/10</span>
+        </div>"""
+
+    return f"""
+    <div class="score-card">
+        <div class="model-label">{model_name}</div>
+        <div class="geo-score-ring">
+            <span class="geo-score-number">{geo}</span>
+            <span class="geo-score-label">GEO Score</span>
+        </div>
+        <div class="sub-scores">
+            <div class="sub-score-row">
+                <span class="sub-score-name">Citation Rank</span>
+                <div class="sub-score-bar-bg">
+                    <div class="sub-score-bar-fill" style="width:{citation * 10}%"></div>
+                </div>
+                <span class="sub-score-val">{citation}/10</span>
+            </div>
+            <div class="sub-score-row">
+                <span class="sub-score-name">Accuracy</span>
+                <div class="sub-score-bar-bg">
+                    <div class="sub-score-bar-fill" style="width:{accuracy * 10}%"></div>
+                </div>
+                <span class="sub-score-val">{accuracy}/10</span>
+            </div>
+            {h2h_html}
+        </div>
+        <span class="diag-badge {info['css']}">{info['emoji']} {diag}</span>
+        <p class="advice-text">{info['advice']}</p>
+    </div>"""
+
+
+# ── PDF Export (unchanged) ────────────────────────────────────────
 
 def _safe(text):
     return text.encode("latin-1", errors="replace").decode("latin-1")
 
 
 def _strip_markdown(text):
-    text = re.sub(r'\*\*\*(.*?)\*\*\*', r'\1', text)   # bold+italic
-    text = re.sub(r'\*\*(.*?)\*\*',     r'\1', text)   # bold
-    text = re.sub(r'\*(.*?)\*',         r'\1', text)   # italic
-    text = re.sub(r'_(.*?)_',           r'\1', text)   # italic underscore
-    text = re.sub(r'`([^`]*)`',         r'\1', text)   # inline code
-    text = re.sub(r'(?m)^#{1,6}\s+',   '',    text)   # headers
-    text = re.sub(r'(?m)^\s*[-*+]\s+', '- ',  text)   # bullet points
+    text = re.sub(r'\*\*\*(.*?)\*\*\*', r'\1', text)
+    text = re.sub(r'\*\*(.*?)\*\*',     r'\1', text)
+    text = re.sub(r'\*(.*?)\*',         r'\1', text)
+    text = re.sub(r'_(.*?)_',           r'\1', text)
+    text = re.sub(r'`([^`]*)`',         r'\1', text)
+    text = re.sub(r'(?m)^#{1,6}\s+',   '',    text)
+    text = re.sub(r'(?m)^\s*[-*+]\s+', '- ',  text)
     return text.strip()
 
 
-# ── Purple palette ──────────────────────────────────────────────
-P_DARK   = (62,  38, 110)   # deep purple — headers, high scores
-P_MID    = (105, 70, 165)   # medium purple — accents, mid scores
-P_SOFT   = (158, 125, 210)  # soft purple — low scores, partial
-P_LIGHT  = (224, 215, 245)  # pale purple — table fills, tag backgrounds
-P_PALE   = (246, 243, 252)  # near-white purple — alternating rows
-G_DARK   = (65,  65,  70)   # dark gray — body text
-G_MID    = (145, 145, 150)  # medium gray — captions, missing scores
-G_LIGHT  = (220, 220, 224)  # light gray — borders, dividers
+P_DARK  = (62,  38, 110)
+P_MID   = (105, 70, 165)
+P_SOFT  = (158, 125, 210)
+P_LIGHT = (224, 215, 245)
+P_PALE  = (246, 243, 252)
+G_DARK  = (65,  65,  70)
+G_MID   = (145, 145, 150)
+G_LIGHT = (220, 220, 224)
 
 
 def _section_title(pdf, title):
@@ -267,10 +418,10 @@ def _score_color(score, max_val=10):
 
 
 DIAG_COLOR = {
-    "GEO Ready":                 P_DARK,
-    "Accurate but Missing":      P_MID,
-    "Visible but Wrong":         P_SOFT,
-    "Invisible & Misrepresented":G_MID,
+    "GEO Ready":                  P_DARK,
+    "Accurate but Missing":       P_MID,
+    "Visible but Wrong":          P_SOFT,
+    "Invisible & Misrepresented": G_MID,
 }
 
 
@@ -279,46 +430,35 @@ def generate_pdf(brand, category, product, competitor, results, claude_scores, g
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
     LEFT = 15
-    W    = pdf.w - 30   # usable width
+    W    = pdf.w - 30
 
-    # ── HEADER BAR ──────────────────────────────────────────────
     pdf.set_fill_color(*P_DARK)
     pdf.rect(0, 0, pdf.w, 28, "F")
-
     pdf.set_xy(0, 6)
     pdf.set_font("Helvetica", "B", 17)
     pdf.set_text_color(255, 255, 255)
     pdf.cell(0, 9, "AI Brand Footprint Audit", align="C", ln=True)
-
     pdf.set_font("Helvetica", "", 9)
     pdf.set_text_color(*P_LIGHT)
     pdf.cell(0, 6, f"GEO Diagnostic Report   |   {datetime.date.today()}", align="C", ln=True)
-
     pdf.ln(8)
 
-    # ── BRAND META ──────────────────────────────────────────────
     pdf.set_text_color(*P_DARK)
     pdf.set_font("Helvetica", "B", 15)
     pdf.cell(0, 9, _safe(brand), ln=True)
-
     pdf.set_font("Helvetica", "", 10)
     pdf.set_text_color(*G_MID)
     meta = f"{product}   |   {category}"
     if competitor:
         meta += f"   |   vs. {competitor}"
     pdf.cell(0, 6, _safe(meta), ln=True)
-
     pdf.set_draw_color(*P_LIGHT)
     pdf.ln(3)
     pdf.line(LEFT, pdf.get_y(), LEFT + W, pdf.get_y())
     pdf.ln(5)
 
-    # ── SCORES TABLE ────────────────────────────────────────────
     _section_title(pdf, "GEO SCORES")
-
-    cw = [W * 0.38, W * 0.31, W * 0.31]   # col widths: label | Claude | Grok
-
-    # Header row
+    cw = [W * 0.38, W * 0.31, W * 0.31]
     pdf.set_font("Helvetica", "B", 9)
     pdf.set_fill_color(*P_LIGHT)
     pdf.set_text_color(*P_DARK)
@@ -327,59 +467,47 @@ def generate_pdf(brand, category, product, competitor, results, claude_scores, g
     pdf.cell(cw[2], 7, "Grok",   border="B", fill=True, align="C", ln=True)
 
     score_rows = [
-        ("GEO Score",     claude_scores["geo_score"],    grok_scores["geo_score"],    100),
-        ("Citation Rank", claude_scores["citation"],     grok_scores["citation"],     10),
-        ("Accuracy",      claude_scores["accuracy"],     grok_scores["accuracy"],     10),
+        ("GEO Score",     claude_scores["geo_score"], grok_scores["geo_score"], 100),
+        ("Citation Rank", claude_scores["citation"],  grok_scores["citation"],  10),
+        ("Accuracy",      claude_scores["accuracy"],  grok_scores["accuracy"],  10),
     ]
     if claude_scores["head_to_head"] is not None:
-        score_rows.append(("Head-to-Head",
-                           claude_scores["head_to_head"],
-                           grok_scores["head_to_head"], 10))
+        score_rows.append(("Head-to-Head", claude_scores["head_to_head"], grok_scores["head_to_head"], 10))
 
     for i, (label, cv, gv, mx) in enumerate(score_rows):
         fill_bg = P_PALE if i % 2 == 0 else (255, 255, 255)
         row_h   = 8 if label == "GEO Score" else 7
         fsize   = 11 if label == "GEO Score" else 9
         fbold   = "B" if label == "GEO Score" else ""
-
         pdf.set_fill_color(*fill_bg)
         pdf.set_text_color(*G_DARK)
         pdf.set_font("Helvetica", fbold, fsize)
         pdf.cell(cw[0], row_h, label, fill=True)
-
         for val in (cv, gv):
             pdf.set_text_color(*_score_color(val, mx))
             pdf.set_font("Helvetica", "B", fsize)
-            pdf.cell(cw[1] if val == cv else cw[2],
-                     row_h, f"{val} / {mx}", fill=True, align="C")
+            pdf.cell(cw[1] if val == cv else cw[2], row_h, f"{val} / {mx}", fill=True, align="C")
         pdf.ln()
 
     pdf.set_text_color(*G_DARK)
     pdf.ln(6)
 
-    # ── DIAGNOSIS ───────────────────────────────────────────────
     _section_title(pdf, "DIAGNOSIS")
-
     for model_name, scores in [("Claude", claude_scores), ("Grok", grok_scores)]:
         diag   = scores["diagnosis"]
         dr, dg, db = DIAG_COLOR.get(diag, (80, 80, 80))
         advice = DIAGNOSIS_INFO[diag]["advice"]
-
-        # Colored left accent bar
         pdf.set_fill_color(dr, dg, db)
         bar_y = pdf.get_y()
         pdf.rect(LEFT, bar_y, 3, 22, "F")
-
         pdf.set_x(LEFT + 6)
         pdf.set_font("Helvetica", "B", 10)
         pdf.set_text_color(*G_DARK)
         pdf.cell(W - 6, 6, model_name, ln=True)
-
         pdf.set_x(LEFT + 6)
         pdf.set_font("Helvetica", "B", 9)
         pdf.set_text_color(dr, dg, db)
         pdf.cell(W - 6, 5, diag, ln=True)
-
         pdf.set_x(LEFT + 6)
         pdf.set_font("Helvetica", "", 8)
         pdf.set_text_color(*G_MID)
@@ -389,37 +517,28 @@ def generate_pdf(brand, category, product, competitor, results, claude_scores, g
     pdf.set_text_color(*G_DARK)
     pdf.ln(2)
 
-    # ── RAW RESPONSES ───────────────────────────────────────────
     _section_title(pdf, "RAW AI RESPONSES")
-
     for r in results:
         type_label = r["type"].upper()
         if r["type"] == "awareness":
             type_label += "  (context only — not scored)"
-
-        # Query type tag
         pdf.set_font("Helvetica", "B", 9)
         pdf.set_text_color(*P_DARK)
         pdf.set_fill_color(*P_LIGHT)
         pdf.cell(0, 6, f"  {type_label}", fill=True, ln=True)
-
         pdf.set_font("Helvetica", "I", 8)
         pdf.set_text_color(*G_MID)
         pdf.set_x(LEFT + 3)
         pdf.multi_cell(W - 3, 4, _safe(r["prompt"]))
         pdf.ln(2)
-
         for model_name, key in [("Claude", "claude"), ("Grok", "grok")]:
             pdf.set_font("Helvetica", "B", 9)
             pdf.set_text_color(*P_MID)
             pdf.cell(0, 5, model_name, ln=True)
-
             pdf.set_font("Helvetica", "", 8.5)
             pdf.set_text_color(*G_DARK)
-            clean = _strip_markdown(r[key])
-            pdf.multi_cell(0, 5, _safe(clean))
+            pdf.multi_cell(0, 5, _safe(_strip_markdown(r[key])))
             pdf.ln(2)
-
         pdf.set_draw_color(*G_LIGHT)
         pdf.line(LEFT, pdf.get_y(), LEFT + W, pdf.get_y())
         pdf.ln(4)
@@ -427,7 +546,7 @@ def generate_pdf(brand, category, product, competitor, results, claude_scores, g
     return bytes(pdf.output())
 
 
-# --- Run & Display ---
+# ── Run & Display ─────────────────────────────────────────────────
 
 if run_button:
     ant_client  = anthropic.Anthropic(api_key=anthropic_key)
@@ -440,34 +559,17 @@ if run_button:
         claude_scores = score_model(ant_client, brand, results, "claude")
         grok_scores   = score_model(ant_client, brand, results, "grok")
 
-    st.divider()
-    st.subheader(f"Results: {brand}")
+    st.markdown('<div class="section-header">Results</div>', unsafe_allow_html=True)
 
     col_claude, col_grok = st.columns(2)
+    with col_claude:
+        st.markdown(render_score_card("Claude", claude_scores), unsafe_allow_html=True)
+    with col_grok:
+        st.markdown(render_score_card("Grok", grok_scores), unsafe_allow_html=True)
 
-    for col, scores, model_name in [
-        (col_claude, claude_scores, "Claude"),
-        (col_grok,   grok_scores,   "Grok")
-    ]:
-        with col:
-            st.markdown(f"#### {model_name}")
+    st.markdown('<hr class="divider-line">', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Raw AI Responses</div>', unsafe_allow_html=True)
 
-            st.metric("GEO Score", f"{scores['geo_score']} / 100")
-
-            m1, m2, m3 = st.columns(3)
-            m1.metric("Citation Rank", f"{scores['citation']} / 10")
-            m2.metric("Accuracy",      f"{scores['accuracy']} / 10")
-            if scores["head_to_head"] is not None:
-                m3.metric("Head-to-Head", f"{scores['head_to_head']} / 10")
-
-            diag = scores["diagnosis"]
-            info = DIAGNOSIS_INFO[diag]
-            st.markdown(f"**Diagnosis:** {info['emoji']} `{diag}`")
-            st.caption(info["advice"])
-
-    # --- Raw responses ---
-    st.divider()
-    st.subheader("Raw AI Responses")
     for r in results:
         label = f"[{r['type'].upper()}]  {r['prompt'][:70]}..."
         if r["type"] == "awareness":
@@ -483,8 +585,7 @@ if run_button:
                 st.markdown("**Grok**")
                 st.markdown(clean(r["grok"]))
 
-    # --- Download PDF ---
-    st.divider()
+    st.markdown('<hr class="divider-line">', unsafe_allow_html=True)
     pdf_bytes = generate_pdf(
         brand, category, product, competitor or None,
         results, claude_scores, grok_scores
@@ -495,4 +596,5 @@ if run_button:
         file_name=f"geo_audit_{brand.lower().replace(' ', '_')}.pdf",
         mime="application/pdf",
         type="primary",
+        use_container_width=True,
     )
