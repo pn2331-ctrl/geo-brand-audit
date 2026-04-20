@@ -115,5 +115,5 @@ This project mapped 7 GEO-native startups (Profound, Peec AI, Rankscale, Omnius,
 ## Author
 
 **Puyue (Iris) Niu**  
-NYU Stern School of Business  
+NYU Tandon School of Engineering 
 [LinkedIn](https://www.linkedin.com/in/puyue-niu/) · [Tableau Portfolio](https://public.tableau.com/app/profile/niu.niu6737/vizzes)
