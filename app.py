@@ -12,10 +12,10 @@ st.set_page_config(
 )
 
 CUSTOM_CSS = """<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 
 *, *::before, *::after {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
 /* Full-page gradient */
@@ -37,19 +37,6 @@ CUSTOM_CSS = """<style>
     text-align: center;
     padding: 3.2rem 2rem 2.4rem;
     margin-bottom: 1.2rem;
-}
-.hero-tag {
-    display: inline-block;
-    background: rgba(195,180,218,0.28);
-    color: #8B78A8;
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 0.25rem 0.9rem;
-    border-radius: 99px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 1.1rem;
-    border: 1px solid rgba(195,180,218,0.5);
 }
 .geo-hero h1 {
     font-size: 2.7rem;
@@ -148,26 +135,12 @@ CUSTOM_CSS = """<style>
 [data-testid="stSidebar"] h3 { color: #1C1828 !important; font-weight: 700 !important; }
 </style>"""
 
-# Grid overlay
-GRID_OVERLAY = """
-<div style="
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background-image:
-        linear-gradient(rgba(180,160,205,0.13) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(180,160,205,0.13) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-"></div>"""
-
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
-st.markdown(GRID_OVERLAY, unsafe_allow_html=True)
 
 # ── Hero ──────────────────────────────────────────────────────────
 st.markdown("""
 <div class="geo-hero">
-    <div class="hero-tag">GEO Research &nbsp;·&nbsp; NYU Stern &nbsp;·&nbsp; Spring 2026</div>
-    <h1>AI Brand Footprint Audit</h1>
+    <h1>Who told AI that about your brand<br>— and is it actually true?</h1>
     <p>See how Claude and Grok discover, describe, and recommend your brand — scored with the GEO diagnostic framework.</p>
 </div>
 """, unsafe_allow_html=True)
