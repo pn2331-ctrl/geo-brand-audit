@@ -24,11 +24,8 @@ CUSTOM_CSS = """<style>
     min-height: 100vh;
 }
 
-[data-testid="stSidebar"] {
-    background: rgba(255,255,255,0.72) !important;
-    backdrop-filter: blur(16px);
-    border-right: 1px solid rgba(210,195,230,0.45) !important;
-}
+section[data-testid="stSidebar"],
+[data-testid="collapsedControl"] { display: none !important; }
 
 #MainMenu, footer { visibility: hidden; }
 
@@ -66,13 +63,6 @@ CUSTOM_CSS = """<style>
     border: 1px solid rgba(215,200,235,0.6);
 }
 
-[data-testid="stVerticalBlockBorderWrapper"] {
-    background: rgba(255,255,255,0.75) !important;
-    border-radius: 16px !important;
-    border: 1px solid rgba(215,200,235,0.55) !important;
-    backdrop-filter: blur(14px) !important;
-    box-shadow: 0 2px 20px rgba(180,150,210,0.08) !important;
-}
 
 .model-label {
     font-size: 0.72rem;
@@ -145,7 +135,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ── Sidebar ───────────────────────────────────────────────────────
+# ── API Keys (silent) ─────────────────────────────────────────────
 try:
     _ant_secret = st.secrets.get("ANTHROPIC_API_KEY", "")
     _xai_secret = st.secrets.get("XAI_API_KEY", "")
@@ -153,30 +143,25 @@ except Exception:
     _ant_secret = ""
     _xai_secret = ""
 
-with st.sidebar:
-    st.markdown("### API Keys")
-    if _ant_secret and _xai_secret:
-        st.success("Keys loaded from secrets.")
-        anthropic_key = _ant_secret
-        xai_key       = _xai_secret
-    else:
+if _ant_secret and _xai_secret:
+    anthropic_key = _ant_secret
+    xai_key       = _xai_secret
+else:
+    with st.expander("API Keys required"):
         anthropic_key = st.text_input("Anthropic API Key", type="password", placeholder="sk-ant-...")
         xai_key       = st.text_input("xAI API Key",       type="password", placeholder="xai-...")
         st.caption("Keys are used only for this session and never stored.")
-    st.divider()
-    st.caption("Built on GEO research · NYU Stern Digital Strategy, Spring 2026.")
 
 # ── Inputs ────────────────────────────────────────────────────────
 st.markdown('<div class="section-header">Brand Info</div>', unsafe_allow_html=True)
 
-with st.container(border=True):
-    col1, col2 = st.columns(2)
-    with col1:
-        brand    = st.text_input("Brand Name",     placeholder="e.g. CeraVe")
-        category = st.text_input("Market Context", placeholder="e.g. sensitive skin, electric vehicles")
-    with col2:
-        product    = st.text_input("Product Type",         placeholder="e.g. moisturizer")
-        competitor = st.text_input("Competitor (optional)", placeholder="e.g. La Roche-Posay")
+col1, col2 = st.columns(2)
+with col1:
+    brand    = st.text_input("Brand Name",     placeholder="e.g. CeraVe")
+    category = st.text_input("Market Context", placeholder="e.g. sensitive skin, electric vehicles")
+with col2:
+    product    = st.text_input("Product Type",         placeholder="e.g. moisturizer")
+    competitor = st.text_input("Competitor (optional)", placeholder="e.g. La Roche-Posay")
 
 keys_ready   = bool(anthropic_key and xai_key)
 inputs_ready = bool(brand and category and product)
