@@ -12,103 +12,163 @@ st.set_page_config(
 )
 
 CUSTOM_CSS = """<style>
-[data-testid="stAppViewContainer"] { background: #F8F6FD; }
-[data-testid="stSidebar"] { background: #FFFFFF; border-right: 1px solid #E0D7F5; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+*, *::before, *::after {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* Full-page gradient */
+.stApp {
+    background: linear-gradient(135deg, #CEC0DE 0%, #F5F0FA 48%, #F0C2CE 100%) fixed;
+    min-height: 100vh;
+}
+
+[data-testid="stSidebar"] {
+    background: rgba(255,255,255,0.72) !important;
+    backdrop-filter: blur(16px);
+    border-right: 1px solid rgba(210,195,230,0.45) !important;
+}
+
 #MainMenu, footer { visibility: hidden; }
 
+/* Hero */
 .geo-hero {
-    background: linear-gradient(135deg, #3E266E 0%, #6946A5 60%, #9E7DD2 100%);
-    border-radius: 16px;
-    padding: 2.5rem 2.5rem 2.2rem;
-    margin-bottom: 1.8rem;
+    text-align: center;
+    padding: 3.2rem 2rem 2.4rem;
+    margin-bottom: 1.2rem;
+}
+.hero-tag {
+    display: inline-block;
+    background: rgba(195,180,218,0.28);
+    color: #8B78A8;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.25rem 0.9rem;
+    border-radius: 99px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 1.1rem;
+    border: 1px solid rgba(195,180,218,0.5);
 }
 .geo-hero h1 {
-    font-size: 2rem; font-weight: 800; margin: 0 0 0.5rem; color: white;
+    font-size: 2.7rem;
+    font-weight: 900;
+    color: #1C1828;
+    margin: 0 0 0.9rem;
+    line-height: 1.15;
+    letter-spacing: -0.8px;
 }
 .geo-hero p {
-    font-size: 1rem; margin: 0; color: #E0D7F5; line-height: 1.5;
-}
-.geo-hero .tag {
-    display: inline-block; background: rgba(255,255,255,0.18);
-    color: #F5F0FF; font-size: 0.72rem; font-weight: 600;
-    padding: 0.2rem 0.7rem; border-radius: 99px; margin-top: 1rem;
-    letter-spacing: 0.8px; text-transform: uppercase;
+    font-size: 1.05rem;
+    color: #8A7898;
+    line-height: 1.7;
+    margin: 0 auto;
+    max-width: 500px;
 }
 
-.section-header {
-    font-size: 1rem; font-weight: 700; color: #3E266E;
-    margin: 1.6rem 0 0.6rem;
-    padding-left: 0.75rem;
-    border-left: 4px solid #6946A5;
-}
-
+/* Cards */
 .score-card {
-    background: white;
-    border-radius: 14px;
-    padding: 1.6rem 1.4rem;
-    box-shadow: 0 4px 24px rgba(62,38,110,0.09);
-    border: 1px solid #E8E2F5;
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: 18px;
+    padding: 1.8rem 1.5rem;
     text-align: center;
+    box-shadow: 0 4px 32px rgba(180,150,210,0.10), 0 1px 4px rgba(0,0,0,0.03);
+    border: 1px solid rgba(215,200,235,0.6);
 }
+
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background: rgba(255,255,255,0.75) !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(215,200,235,0.55) !important;
+    backdrop-filter: blur(14px) !important;
+    box-shadow: 0 2px 20px rgba(180,150,210,0.08) !important;
+}
+
 .model-label {
-    font-size: 0.85rem; font-weight: 800; color: #3E266E;
-    letter-spacing: 1.2px; text-transform: uppercase;
-    margin-bottom: 1.1rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #A090B8;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
 }
+
 .geo-score-ring {
-    width: 108px; height: 108px; border-radius: 50%;
-    background: linear-gradient(145deg, #3E266E, #9E7DD2);
+    width: 112px; height: 112px; border-radius: 50%;
+    background: linear-gradient(145deg, #C4B2D8, #E8B4C8);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    margin: 0 auto 1.3rem;
-    box-shadow: 0 6px 20px rgba(62,38,110,0.28);
+    margin: 0 auto 1.4rem;
+    box-shadow: 0 8px 28px rgba(196,178,216,0.40);
 }
-.geo-score-number { font-size: 2.3rem; font-weight: 900; color: white; line-height: 1; }
-.geo-score-label  { font-size: 0.56rem; color: #D8CAFF; letter-spacing: 1.8px; text-transform: uppercase; margin-top: 3px; }
+.geo-score-number { font-size: 2.35rem; font-weight: 900; color: white; line-height: 1; }
+.geo-score-label  { font-size: 0.52rem; color: rgba(255,255,255,0.78); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
 
-.sub-scores { margin: 0.2rem 0 1.1rem; }
-.sub-score-row { display: flex; align-items: center; margin: 0.42rem 0; gap: 0.55rem; text-align: left; }
-.sub-score-name { font-size: 0.75rem; color: #8A8AA8; width: 88px; flex-shrink: 0; text-align: right; }
-.sub-score-bar-bg { flex: 1; background: #EFE9FB; border-radius: 99px; height: 6px; overflow: hidden; }
-.sub-score-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #9E7DD2, #3E266E); }
-.sub-score-val { font-size: 0.76rem; font-weight: 700; color: #3E266E; width: 30px; flex-shrink: 0; }
+.sub-scores { margin: 0 0 1.2rem; }
+.sub-score-row { display: flex; align-items: center; margin: 0.45rem 0; gap: 0.55rem; text-align: left; }
+.sub-score-name { font-size: 0.73rem; color: #A898B8; width: 90px; flex-shrink: 0; text-align: right; }
+.sub-score-bar-bg { flex: 1; background: rgba(210,195,230,0.3); border-radius: 99px; height: 6px; overflow: hidden; }
+.sub-score-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #E4B8CC, #C4B2D8); }
+.sub-score-val { font-size: 0.73rem; font-weight: 700; color: #8A78A8; width: 30px; flex-shrink: 0; }
 
 .diag-badge {
-    display: inline-block; padding: 0.3rem 1rem;
-    border-radius: 99px; font-size: 0.8rem; font-weight: 700;
-    margin: 0.2rem 0 0.5rem;
+    display: inline-block; padding: 0.28rem 0.9rem;
+    border-radius: 99px; font-size: 0.77rem; font-weight: 600;
+    margin: 0.3rem 0 0.5rem;
 }
-.diag-geo-ready     { background: #EAE5F7; color: #3E266E; }
-.diag-accurate      { background: #EDE9FA; color: #6946A5; }
-.diag-visible-wrong { background: #FDF0F0; color: #A04040; }
-.diag-invisible     { background: #F0F0F4; color: #7A7A90; }
+.diag-geo-ready     { background: rgba(196,178,216,0.22); color: #7B5FA8; border: 1px solid rgba(196,178,216,0.5); }
+.diag-accurate      { background: rgba(200,185,220,0.2);  color: #9080B0; border: 1px solid rgba(200,185,220,0.45); }
+.diag-visible-wrong { background: rgba(240,185,195,0.22); color: #A85870; border: 1px solid rgba(240,185,195,0.5); }
+.diag-invisible     { background: rgba(180,175,190,0.2);  color: #8A8098; border: 1px solid rgba(180,175,190,0.45); }
 
-.advice-text { font-size: 0.8rem; color: #8A8AA8; line-height: 1.55; margin: 0; }
+.advice-text { font-size: 0.79rem; color: #9A90A8; line-height: 1.6; margin: 0; }
 
-.divider-line {
-    border: none; border-top: 1px solid #E8E2F5; margin: 1.6rem 0;
+.section-header {
+    font-size: 0.7rem; font-weight: 700;
+    color: #A090B8; letter-spacing: 1.8px;
+    text-transform: uppercase;
+    margin: 2rem 0 0.8rem;
 }
 
-[data-testid="stDownloadButton"] button {
-    background: linear-gradient(135deg, #3E266E, #6946A5) !important;
-    color: white !important; border: none !important;
-    border-radius: 8px !important; font-weight: 700 !important;
-    padding: 0.55rem 2rem !important;
-}
+.divider-line { border: none; border-top: 1px solid rgba(210,195,230,0.4); margin: 1.6rem 0; }
+
+[data-testid="stDownloadButton"] button,
 [data-testid="stButton"] button[kind="primary"] {
-    background: linear-gradient(135deg, #3E266E, #6946A5);
-    border: none; border-radius: 8px; font-weight: 700;
+    background: linear-gradient(135deg, #C4B2D8, #E8B0C4) !important;
+    color: white !important; border: none !important;
+    border-radius: 99px !important; font-weight: 700 !important;
+    letter-spacing: 0.4px !important;
+    box-shadow: 0 4px 16px rgba(196,178,216,0.35) !important;
 }
+
+/* Sidebar text */
+[data-testid="stSidebar"] h3 { color: #1C1828 !important; font-weight: 700 !important; }
 </style>"""
 
+# Grid overlay
+GRID_OVERLAY = """
+<div style="
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+        linear-gradient(rgba(180,160,205,0.13) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(180,160,205,0.13) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+"></div>"""
+
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+st.markdown(GRID_OVERLAY, unsafe_allow_html=True)
 
 # ── Hero ──────────────────────────────────────────────────────────
 st.markdown("""
 <div class="geo-hero">
+    <div class="hero-tag">GEO Research &nbsp;·&nbsp; NYU Stern &nbsp;·&nbsp; Spring 2026</div>
     <h1>AI Brand Footprint Audit</h1>
-    <p>See how Claude and Grok discover, describe, and recommend your brand<br>— scored with the GEO diagnostic framework.</p>
-    <span class="tag">NYU Stern · GEO Research · Spring 2026</span>
+    <p>See how Claude and Grok discover, describe, and recommend your brand — scored with the GEO diagnostic framework.</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -131,7 +191,7 @@ with st.sidebar:
         xai_key       = st.text_input("xAI API Key",       type="password", placeholder="xai-...")
         st.caption("Keys are used only for this session and never stored.")
     st.divider()
-    st.caption("Built on GEO research from NYU Stern Digital Strategy, Spring 2026.")
+    st.caption("Built on GEO research · NYU Stern Digital Strategy, Spring 2026.")
 
 # ── Inputs ────────────────────────────────────────────────────────
 st.markdown('<div class="section-header">Brand Info</div>', unsafe_allow_html=True)
@@ -142,8 +202,8 @@ with st.container(border=True):
         brand    = st.text_input("Brand Name",     placeholder="e.g. CeraVe")
         category = st.text_input("Market Context", placeholder="e.g. sensitive skin, electric vehicles")
     with col2:
-        product    = st.text_input("Product Type",          placeholder="e.g. moisturizer")
-        competitor = st.text_input("Competitor (optional)",  placeholder="e.g. La Roche-Posay")
+        product    = st.text_input("Product Type",         placeholder="e.g. moisturizer")
+        competitor = st.text_input("Competitor (optional)", placeholder="e.g. La Roche-Posay")
 
 keys_ready   = bool(anthropic_key and xai_key)
 inputs_ready = bool(brand and category and product)
@@ -175,24 +235,12 @@ def ask_grok(client, prompt):
 
 def build_queries(brand, category, product, competitor=None):
     queries = [
-        {
-            "type": "awareness",
-            "prompt": f"What is {brand}? Describe what they do in {category} in 2-3 sentences."
-        },
-        {
-            "type": "recommendation",
-            "prompt": f"What are the best {product} brands for {category}? List 5 specific brand names and why you recommend each."
-        },
-        {
-            "type": "evaluation",
-            "prompt": f"Is {brand} a good {product} for {category}? What are their strengths and weaknesses?"
-        },
+        {"type": "awareness",       "prompt": f"What is {brand}? Describe what they do in {category} in 2-3 sentences."},
+        {"type": "recommendation",  "prompt": f"What are the best {product} brands for {category}? List 5 specific brand names and why you recommend each."},
+        {"type": "evaluation",      "prompt": f"Is {brand} a good {product} for {category}? What are their strengths and weaknesses?"},
     ]
     if competitor:
-        queries.append({
-            "type": "comparison",
-            "prompt": f"{brand} vs {competitor} as a {product} for {category}: which would you recommend and why?"
-        })
+        queries.append({"type": "comparison", "prompt": f"{brand} vs {competitor} as a {product} for {category}: which would you recommend and why?"})
     return queries
 
 
@@ -301,23 +349,19 @@ def score_model(ant_client, brand, results, model_key):
 
 DIAGNOSIS_INFO = {
     "GEO Ready": {
-        "emoji": "✅",
-        "css":   "diag-geo-ready",
+        "emoji": "✅", "css": "diag-geo-ready",
         "advice": "AI models know your brand, recommend it unprompted, and describe it accurately. Monitor regularly to maintain this position."
     },
     "Visible but Wrong": {
-        "emoji": "⚠️",
-        "css":   "diag-visible-wrong",
+        "emoji": "⚠️", "css": "diag-visible-wrong",
         "advice": "AI recommends your brand but describes it inaccurately. Most dangerous outcome — audit and correct the information sources AI is learning from."
     },
     "Accurate but Missing": {
-        "emoji": "📉",
-        "css":   "diag-accurate",
+        "emoji": "📉", "css": "diag-accurate",
         "advice": "AI describes your brand accurately but doesn't recommend it unprompted. Increase third-party content coverage to boost visibility."
     },
     "Invisible & Misrepresented": {
-        "emoji": "❌",
-        "css":   "diag-invisible",
+        "emoji": "❌", "css": "diag-invisible",
         "advice": "AI doesn't know or recommend your brand. Build foundational content presence from scratch."
     },
 }
@@ -371,7 +415,7 @@ def render_score_card(model_name, scores):
     </div>"""
 
 
-# ── PDF Export (unchanged) ────────────────────────────────────────
+# ── PDF Export ────────────────────────────────────────────────────
 
 def _safe(text):
     return text.encode("latin-1", errors="replace").decode("latin-1")
@@ -409,12 +453,9 @@ def _section_title(pdf, title):
 
 def _score_color(score, max_val=10):
     ratio = score / max_val
-    if ratio >= 0.7:
-        return P_DARK
-    elif ratio >= 0.4:
-        return P_SOFT
-    else:
-        return G_MID
+    if ratio >= 0.7:   return P_DARK
+    elif ratio >= 0.4: return P_SOFT
+    else:              return G_MID
 
 
 DIAG_COLOR = {
@@ -494,9 +535,9 @@ def generate_pdf(brand, category, product, competitor, results, claude_scores, g
 
     _section_title(pdf, "DIAGNOSIS")
     for model_name, scores in [("Claude", claude_scores), ("Grok", grok_scores)]:
-        diag   = scores["diagnosis"]
-        dr, dg, db = DIAG_COLOR.get(diag, (80, 80, 80))
-        advice = DIAGNOSIS_INFO[diag]["advice"]
+        diag        = scores["diagnosis"]
+        dr, dg, db  = DIAG_COLOR.get(diag, (80, 80, 80))
+        advice      = DIAGNOSIS_INFO[diag]["advice"]
         pdf.set_fill_color(dr, dg, db)
         bar_y = pdf.get_y()
         pdf.rect(LEFT, bar_y, 3, 22, "F")
